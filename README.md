@@ -1,3 +1,7 @@
+# 제 인사말부터 읽어주세요!
+https://github.com/NAVER-CAMPUS-HACKDAY/dist-storage/issues/1
+
+
 # 목표
 간단한 분산저장소를 디자인하고 만들어보기
 
