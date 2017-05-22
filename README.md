@@ -10,6 +10,7 @@ https://github.com/NAVER-CAMPUS-HACKDAY/dist-storage/issues/1
 - PUT 한 파일은 3대의 장비에 복제되어 저장된다.
 - GET을 하면 3대 중 1대에서 파일을 읽어 리턴한다.
 - 장비 1대가 죽더라도 나머지 2대로 서비스가 가능해야한다.
+- 죽었던 장비를 다시 살려 서비스에 투입시킬 수 있어야한다.
 
 # 개발 환경
 - linux
