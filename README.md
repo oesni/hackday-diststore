@@ -37,7 +37,8 @@ https://github.com/NAVER-CAMPUS-HACKDAY/dist-storage/issues/1
 # 참고자료
 - distributed file system, CAP theorem 등에 대해 구글링해보면 다양한 자료가 나오지만 처음에는 이해하기 힘들겁니다. 분산시스템에 대한 개괄은 행사 당일에 제가 간단하고 쉽게 설명드리겠습니다.
 - 행사 전에는 아래와 같은 준비를 미리하면 조금 도움이 될겁니다.
-   - 통신기능 만들기
+   - RPC 맛보기
+   	  - 여러 서버가 서로 통신해야하는 시스템이므로, 통신 기능이 당연히 필요하겠죠.
       - 보통 TCP/IP로 소켓통신을 하는 것이 가장 기본적이죠. 하지만 복잡한 통신을 구현하려면 많은 노다가가 필요합니다.
 	  - 그래서 현업에선 RPC라는 것을 많이 씁니다. (Remote Procedure Call)
 	  - GRPC(http://www.grpc.io)라는 것이 심플하고 많이 사용됩니다. 대략 어떻게 쓰는지 훑어만 보면 도움이 될겁니다.
