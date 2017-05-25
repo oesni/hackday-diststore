@@ -157,32 +157,35 @@ class DataServer : public DsService::Service {
             file << request -> contents();
             file.close();
             logFile << ++logIndex<<" "<<"w"<<" "<<request->name()<<std::endl;
-            //send to peer
-            std::mutex mtx;
-            std::vector<std::thread> threads;
-            int count = 0;
-            auto client = clients.begin();
-         
-            while(client != clients.end())
+            if(isLeader)
             {
-                threads.push_back(std::thread([this,&mtx,&count,client,request]() {
-                    std::string reply = client -> Replicate(request->name(),request->contents());
-                    if(reply == "ok")
-                    {
-                        mtx.lock();
-                        count++;
-                        mtx.unlock();
-                    }
-                            }));
-                client++;
-            }
+                //send to peer
+                std::mutex mtx;
+                std::vector<std::thread> threads;
+                int count = 0;
+                auto client = clients.begin();
+         
+                while(client != clients.end())
+                {
+                    threads.push_back(std::thread([this,&mtx,&count,client,request]() {
+                        std::string reply = client -> Replicate(request->name(),request->contents());
+                        if(reply == "ok")
+                        {
+                            mtx.lock();
+                            count++;
+                            mtx.unlock();
+                        }
+                                }));
+                    client++;
+                }
 
-            for(std::thread& t : threads)
-                t.join();
-            if(count)
-                reply -> set_message("ok");
-            else
-                reply -> set_message("fail to save file");
+                for(std::thread& t : threads)
+                    t.join();
+                if(count)
+                    reply -> set_message("ok");
+                else
+                    reply -> set_message("fail to save file");
+            }
         }
         else
         {
