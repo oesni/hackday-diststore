@@ -33,7 +33,7 @@ class DsSelector {
 		}
 
 
-		void Update(int _leader_idx, bool _states[]);
+		std::string Update(int _leader_idx, bool _states[]);
 
 		std::shared_ptr<Channel> GetLeader();
 

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sstream>
 #include <fstream>
 #include <memory>
 #include <string>
@@ -12,14 +13,30 @@
 
 using grpc::Channel;
 
-void DsSelector::Update(int _leader_idx, bool _states[]) {
+std::string DsSelector::Update(int _leader_idx, bool _states[]) {
+	std::stringstream ss;
 	mtx.lock();
 	leader_idx = _leader_idx;
+	ss << "leader_idx:" << leader_idx << ", states:[";
 	int i;
 	for (i = 0; i < 3; i++) {
 		states[i] = _states[i];
+		if (i == leader_idx) {
+			ss << "L";
+		} else if (states[i]) {
+			ss << "N";
+		} else {
+			ss << "F";
+		}
+
+		if (i < 2) {
+			ss << ",";
+		} else {
+			ss << "]";
+		}
 	}
 	mtx.unlock();
+	return ss.str();
 }
 
 std::shared_ptr<Channel> DsSelector::GetLeader() {
