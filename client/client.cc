@@ -124,8 +124,8 @@ void MembershipUpdater(MgmtServiceClient *client, DsSelector *dsSelector) {
 		bool states[3];
 		std::string ret = client->GetMembership(&leader_idx, states);
 		if (ret == "ok") {
-			dsSelector->Update(leader_idx, states);
-			std::cout << "mbr updated" << std::endl;
+			std::string mbr = dsSelector->Update(leader_idx, states);
+			std::cout << "mbr updated: " << mbr << std::endl;
 		} else {
 			std::cerr << "fail to get membership from mgmt. err:" << ret << std::endl;
 		}

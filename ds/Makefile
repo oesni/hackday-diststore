@@ -1,17 +1,17 @@
 CXX = g++
-CPPFLAGS += -I/user/local/include -I./proto -pthread
+CPPFLAGS += -I/user/local/include -I../proto -pthread
 CXXFLAGS += -std=c++11
-LDFLAGS += -L/usr/local/lib `pkg-config --libs grpc++ grpc` -lgrpc++_reflection -lprotobuf -lpthread -ldl
+LDFLAGS += -L/usr/local/lib `pkg-config --libs grpc++ grpc` -Wl,--no-as-needed -lgrpc++_reflection -Wl,--as-needed -lprotobuf -lpthread -ldl
 PROTO_OBJS = ../proto/*.o
 
 
-all: ds
+all: data_server
 
-ds: ds.o
+mgmt: data_server.o
 	$(CXX) $^ $(PROTO_OBJS) $(LDFLAGS) -o $@
 
-ds.o: ds.cc
+mgmt.o: data_server.cpp
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $^
 
 clean:
-	rm -rf *.o ds
+	rm -rf *.o data_server
