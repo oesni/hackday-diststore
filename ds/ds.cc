@@ -151,7 +151,7 @@ class DataServer : public DsService::Service {
          //   reply -> set_message("I'm not leader!!");
          //   return Status::OK;
         //}
-        ofstream file(storage_prefix + request->name() ,ios::out);
+        ofstream file(storage_prefix + request->name() ,ios::out|ios::trunc);
         if(file.is_open())
         {
             file << request -> contents();
