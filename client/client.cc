@@ -131,7 +131,7 @@ void MembershipUpdater(MgmtServiceClient *client, DsSelector *dsSelector) {
 		std::string ret = client->GetMembership(&leader_idx, states);
 		if (ret == "ok") {
 			std::string mbr = dsSelector->Update(leader_idx, states);
-			//std::cout << "mbr updated: " << mbr << std::endl;
+			std::cout << "mbr updated: " << mbr << std::endl;
 		} else {
 			std::cerr << "fail to get membership from mgmt. err:" << ret << std::endl;
 		}
@@ -175,9 +175,9 @@ void assertString(std::string expected, std::string actual) {
 
 int main(int argc, char **argv) {
 	DsSelector dsSelector;
-	MgmtServiceClient client(grpc::CreateChannel("localhost:8080", grpc::InsecureChannelCredentials()));
+	//MgmtServiceClient client(grpc::CreateChannel("localhost:8080", grpc::InsecureChannelCredentials()));
 
-	std::thread mbrUpdater(&MembershipUpdater, &client, &dsSelector);
+	//std::thread mbrUpdater(&MembershipUpdater, &client, &dsSelector);
 	
 	std::cout << "ready to put?" << std::endl;
 	pleaseEnter();
@@ -190,6 +190,6 @@ int main(int argc, char **argv) {
 	std::cout << "get : " << p.first << ", " << p.second << std::endl;
 
 
-	mbrUpdater.join();
+	//mbrUpdater.join();
 	return 0;
 }
