@@ -146,11 +146,11 @@ class DataServer : public DsService::Service {
         override
     {
         std::cout<<"PutFile!"<<std::endl;
-        if(!isLeader)   //if not leader
-        {
-            reply -> set_message("I'm not leader!!");
-            return Status::OK;
-        }
+        //if(!isLeader)   //if not leader
+        //{
+         //   reply -> set_message("I'm not leader!!");
+         //   return Status::OK;
+        //}
         ofstream file(storage_prefix + request->name() ,ios::out);
         if(file.is_open())
         {
@@ -162,6 +162,7 @@ class DataServer : public DsService::Service {
             std::vector<std::thread> threads;
             int count = 0;
             auto client = clients.begin();
+         
             while(client != clients.end())
             {
                 threads.push_back(std::thread([this,&mtx,&count,client,request]() {
@@ -173,7 +174,9 @@ class DataServer : public DsService::Service {
                         mtx.unlock();
                     }
                             }));
+                client++;
             }
+
             for(std::thread& t : threads)
                 t.join();
             if(count)
@@ -262,7 +265,7 @@ class DataServer : public DsService::Service {
         return Status::OK;
     } /// I'm not sure.. if it will work...
 
-};
+};   
 
 //get log index whenever system dies
 void getlogIndex(){
