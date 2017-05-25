@@ -34,6 +34,7 @@ using grpc::Channel;
 using grpc::ClientContext;
 
 const static std::string storage_prefix("/data/");
+unsigned long logIndex = 0;
 
 class Peer final {
     private:
@@ -78,9 +79,9 @@ class DsServiceClient {
             }
         }
 
-		std::string Help(int lognum) {
+		std::string Help() {
 			HelpRequest request;
-			request.set_lastlogindex(lognum);
+			request.set_lastlogindex(logIndex);
 
 			ClientContext context;
 			std::chrono::system_clock::time_point deadline = 
@@ -89,10 +90,27 @@ class DsServiceClient {
 
 			HelpReply h;
 			std::unique_ptr<ClientReader<HelpReply>> reader(stub_->Help(&context, request));
+			
+    		fstream logFile;
+			logFile.open(storage_prefix+"log", fstream::out | fstream::in | fstream::app);
+			if(!logFile.good()){
+				std::cerr<<"cannot open log file!!!"<<std::endl;
+				exit(1);
+			}
 			while(reader->Read(&h)) {
 				// action like put file
+				ofstream file (storage_prefix + h.logname(), ios::out);
+				if(file.is_open()){
+					file<<h.logcontent();
+					file.close();
+				}else{
+					return "failed";
+				}
+            	logFile << ++logIndex<<" "<<"w"<<" "<<h.logname()<<std::endl;
 			}
+			logFile.close();
 			Status status = reader->Finish();
+			return "ok";
 		}
 };
 
@@ -113,7 +131,6 @@ class DataServer : public DsService::Service {
         });
     }
 //variable
-    unsigned long logIndex = 0;
     fstream logFile;
     bool isLeader;
     std::vector<DsServiceClient> clients;
@@ -134,7 +151,6 @@ class DataServer : public DsService::Service {
             file.close();
             logFile << ++logIndex<<" "<<"w"<<" "<<request->name()<<std::endl;
             //send to peer
-            //
             int count = 0;
             auto client = clients.begin();
             while(client != clients.end())
@@ -188,7 +204,8 @@ class DataServer : public DsService::Service {
 		char *logfilename;
 		strcat(logfilename, storage_prefix.c_str());
 		strcat(logfilename, "log");
-        FILE* log = fopen(logfilename, "r");
+        
+		FILE* log = fopen(logfilename, "r");
 		logFile.open(storage_prefix+"log", fstream::out | fstream::in | fstream::app);
 		std::string line;
 		int num;
@@ -228,6 +245,10 @@ class DataServer : public DsService::Service {
 
 };
 
+//get log index whenever system dies
+void getlogIndex(){
+	logIndex = 0;	
+}
 
 int main(int argc, char** argv)
 {
@@ -238,7 +259,11 @@ int main(int argc, char** argv)
     {
         p.push_back(Peer(std::string(argv[i])));
     }
+	getlogIndex();
 
+	if(logIndex !=0 ){
+		// call Client Help;
+	}
     DataServer service(p,isLeader);
 
     ServerBuilder builder;
