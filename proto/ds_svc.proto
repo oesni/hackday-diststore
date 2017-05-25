@@ -24,3 +24,20 @@ message GetFileReply {
 	string message = 1;
 	string contents = 2;
 }
+
+message CheckHealth {
+    //empty message
+}
+
+message ReturnHealth {
+    string message = 1;
+    int32 lastLogInedex = 2;
+}
+
+message Help {
+    int32 lastLogIndex = 1;
+}
+
+message ReturnHelp {
+    string logInfo = 1;
+}
