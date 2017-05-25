@@ -70,3 +70,14 @@ std::shared_ptr<Channel> DsSelector::GetRandomDs() {
 	srand((unsigned int) time(NULL));
 	return channels[idx_list[rand() % idx_list_size]];
 }
+
+std::shared_ptr<Channel> DsSelector::GetDs(int idx) {
+	mtx.lock();
+	bool alive = states[idx];
+	mtx.unlock();
+	if (alive) {
+		return channels[idx];
+	} else {
+		return NULL;
+	}
+}

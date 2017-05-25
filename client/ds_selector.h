@@ -38,4 +38,5 @@ class DsSelector {
 		std::shared_ptr<Channel> GetLeader();
 
 		std::shared_ptr<Channel> GetRandomDs();
+		std::shared_ptr<Channel> GetDs(int idx);
 };
