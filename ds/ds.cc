@@ -14,6 +14,7 @@ using namespace std;
 using grpc::Server;
 using grpc::ServerBuilder;
 using grpc::ServerContext;
+using grpc::ServerWriter;
 using grpc::Status;
 
 using diststore::DsService;
@@ -157,10 +158,11 @@ class DataServer : public DsService::Service {
         return Status::OK;
     }
 
-    Status Help(ServerContext* context, const HelpRequest* request, HelpReply* reply)
+    Status Help(ServerContext* context, const HelpRequest* request, ServerWriter<HelpReply>* reply)
         override
     {
         //do something
+		int lastIndex = request->lastlogindex();
 
         return Status::OK;
     }

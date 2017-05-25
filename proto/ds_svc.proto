@@ -6,7 +6,7 @@ service DsService {
 	rpc PutFile (PutFileRequest) returns (PutFileReply) {}
 	rpc GetFile (GetFileRequest) returns (GetFileReply) {}
     rpc CheckHealth (CheckHealthRequest) returns (CheckHealthReply) {}
-    rpc Help (HelpRequest) returns (HelpReply) {}
+    rpc Help (HelpRequest) returns (stream HelpReply) {}
 }
 
 message PutFileRequest {
@@ -41,5 +41,7 @@ message HelpRequest {
 }
 
 message HelpReply {
-    string loginfo = 1;
+	int32 lognum = 1;
+    string logname = 2;
+	string logcontent = 3;
 }
