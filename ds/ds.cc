@@ -80,7 +80,7 @@ class DataServer : public DsService::Service {
     DataServer(std::vector<Peer>peer, bool leader)
         :isLeader(leader)
     {
-        logFile = fstream(storage_prefix+"log", fstream::out | fstream::in | fstream::app);
+        logFile.open(storage_prefix+"log", fstream::out | fstream::in | fstream::app);
         if(!logFile.good())
         {
             std::cerr<<"cannot open log file !!"<<std::endl;
