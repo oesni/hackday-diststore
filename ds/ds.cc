@@ -269,8 +269,20 @@ class DataServer : public DsService::Service {
 
 //get log index whenever system dies
 void getlogIndex(){
+	fstream logFile;
+	std::string line;
 
-	logIndex = 0;	
+    logFile.open(logFilename, fstream::out | fstream::in | fstream::app);
+	logIndex = -1;	
+	while(true){
+		getline(logFile, line);
+		if(!line.empty()){
+			logIndex ++;
+		}else {
+			break;
+		}
+	}
+	logFile.close();
 }
 
 int main(int argc, char** argv)
