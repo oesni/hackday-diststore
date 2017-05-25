@@ -7,7 +7,7 @@
 
 #include <grpc++/grpc++.h>
 
-#include "../proto/ds_svc.grpc.pb.h"
+#include "ds_svc.grpc.pb.h"
 
 using namespace std;
 using grpc::Server;
@@ -18,14 +18,14 @@ using grpc::Status;
 using diststore::DsService;
 using diststore::PutFileRequest;
 using diststore::PutFileReply;
-using distsotre::GetFileRequest;
-using distsotre::GetFileReply;
-using distsotre::CheckHealthRequest;
+using diststore::GetFileRequest;
+using diststore::GetFileReply;
+using diststore::CheckHealthRequest;
 using diststore::CheckHealthReply;
 using diststore::HelpRequest;
 using diststore::HelpReply;
 
-using grpc::channel;
+using grpc::Channel;
 using grpc::ClientContext;
 
 const static std::string storage_prefix("/data/");
