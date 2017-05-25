@@ -7,7 +7,7 @@ service MgmtService {
 }
 
 message GetMembershipRequest {
-
+	// empty message
 }
 
 // L: leader, N: normal, F: Fail

@@ -33,13 +33,13 @@ message CheckHealthRequest {
 
 message CheckHealthReply {
     string message = 1;
-    int32 lastLogInedex = 2;
+    int32 lastlogindex = 2;
 }
 
 message HelpRequest {
-    int32 lastLogIndex = 1;
+    int32 lastlogindex = 1;
 }
 
 message HelpReply {
-    string logInfo = 1;
+    string loginfo = 1;
 }
