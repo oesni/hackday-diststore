@@ -165,9 +165,6 @@ class DataServer : public DsService::Service {
         return Status::OK;
     }
 
-    void RunServer(int argc, char** argv)
-    {
-    }
 };
 
 ;
