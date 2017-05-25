@@ -34,6 +34,7 @@ using grpc::Channel;
 using grpc::ClientContext;
 
 const static std::string storage_prefix("/data/");
+const static std::string logFilename("/data/log");
 unsigned long logIndex = 0;
 
 class Peer final {
@@ -92,7 +93,7 @@ class DsServiceClient {
 			std::unique_ptr<ClientReader<HelpReply>> reader(stub_->Help(&context, request));
 			
     		fstream logFile;
-			logFile.open(storage_prefix+"log", fstream::out | fstream::in | fstream::app);
+			logFile.open(logFilename, fstream::out | fstream::in | fstream::app);
 			if(!logFile.good()){
 				std::cerr<<"cannot open log file!!!"<<std::endl;
 				exit(1);
@@ -119,7 +120,7 @@ class DataServer : public DsService::Service {
     DataServer(std::vector<Peer>peer, bool leader)
         :isLeader(leader)
     {
-        logFile.open(storage_prefix+"log", fstream::out | fstream::in | fstream::app);
+        logFile.open(logFilename, fstream::out | fstream::in | fstream::app);
         if(!logFile.good())
         {
             std::cerr<<"cannot open log file !!"<<std::endl;
@@ -202,11 +203,10 @@ class DataServer : public DsService::Service {
 		int lastIndex = request->lastlogindex();
 		
 		char *logfilename;
-		strcat(logfilename, storage_prefix.c_str());
-		strcat(logfilename, "log");
+		strcat(logfilename, logFilename.c_str());
         
 		FILE* log = fopen(logfilename, "r");
-		logFile.open(storage_prefix+"log", fstream::out | fstream::in | fstream::app);
+		logFile.open(logFilename, fstream::out | fstream::in | fstream::app);
 		std::string line;
 		int num;
 		//strtok...
@@ -247,6 +247,7 @@ class DataServer : public DsService::Service {
 
 //get log index whenever system dies
 void getlogIndex(){
+
 	logIndex = 0;	
 }
 
