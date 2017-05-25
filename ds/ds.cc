@@ -34,6 +34,7 @@ using diststore::CheckHealthReply;
 using diststore::HelpRequest;
 using diststore::HelpReply;
 
+
 using grpc::Channel;
 using grpc::ClientContext;
 
@@ -297,7 +298,8 @@ int main(int argc, char** argv)
 	getlogIndex();
 
 	if(logIndex !=-1 ){
-				
+		//  Leader's port number needed..!
+		//	DsServiceClient client(grpc::CreateChannel("", grpc::InsecureChannelCredentials()));
 	}
 
     DataServer service(p,isLeader);
