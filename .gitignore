@@ -3,3 +3,6 @@
 *.pb.cc
 *.pb.h
 *.o
+ds
+mgmt
+client

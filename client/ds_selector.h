@@ -18,7 +18,7 @@ class DsSelector {
 
 	public:
 		DsSelector() {
-			ip_list[0] = "10.33.1.57:8081";
+			ip_list[0] = "10.33.1.157:8081";
 			ip_list[1] = "10.33.3.78:8081";
 			ip_list[2] = "10.33.5.126:8081";
 
