@@ -70,9 +70,9 @@ class DsServiceClient {
 
 class MgmtServiceImpl final : public MgmtService::Service {
 	Status GetMembership(ServerContext *context, const GetMembershipRequest *request, GetMembershipResponse *reply){
-		dsTable[0] = reply->member1();
-		dsTable[1] = reply->member2();
-		dsTable[2] = reply->member3();
+		reply->set_member1(dsTable[0]);
+		reply->set_member2(dsTable[1]);
+		reply->set_member3(dsTable[2]);
 		return Status::OK;
 	}
 };
