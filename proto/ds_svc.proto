@@ -5,6 +5,8 @@ package diststore;
 service DsService {
 	rpc PutFile (PutFileRequest) returns (PutFileReply) {}
 	rpc GetFile (GetFileRequest) returns (GetFileReply) {}
+    rpc CheckHealth (CheckHealthRequest) returns (CheckHealthReply) {}
+    rpc Help (HelpRequest) returns (HelpReply) {}
 }
 
 message PutFileRequest {
@@ -25,19 +27,19 @@ message GetFileReply {
 	string contents = 2;
 }
 
-message CheckHealth {
+message CheckHealthRequest {
     //empty message
 }
 
-message ReturnHealth {
+message CheckHealthReply {
     string message = 1;
     int32 lastLogInedex = 2;
 }
 
-message Help {
+message HelpRequest {
     int32 lastLogIndex = 1;
 }
 
-message ReturnHelp {
+message HelpReply {
     string logInfo = 1;
 }
