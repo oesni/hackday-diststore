@@ -13,7 +13,7 @@ class DsSelector {
 		std::mutex mtx;
 		std::shared_ptr<Channel> channels[3];
 		std::string ip_list[3];
-		int leader_idx = -1;
+		int leader_idx = 0;
 		bool states[3];
 
 	public:
@@ -25,7 +25,7 @@ class DsSelector {
 			int i;
 			for (i = 0; i < 3; i++) {
 				channels[i] = grpc::CreateChannel(ip_list[i], grpc::InsecureChannelCredentials());
-				states[i] = false;
+				states[i] = true;
 			}
 		}
 
