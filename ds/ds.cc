@@ -5,6 +5,10 @@
 #include <vector>
 #include <algorithm>
 #include <memory>
+#include <queue>
+#include <thread>
+#include <mutex>
+
 
 #include <grpc++/grpc++.h>
 
@@ -137,9 +141,11 @@ class DataServer : public DsService::Service {
     std::vector<DsServiceClient> clients;
 
     
+    
     Status PutFile(ServerContext* context, const PutFileRequest* request, PutFileReply* reply)
         override
     {
+        std::cout<<"PutFile!"<<std::endl;
         if(!isLeader)   //if not leader
         {
             reply -> set_message("I'm not leader!!");
@@ -152,15 +158,28 @@ class DataServer : public DsService::Service {
             file.close();
             logFile << ++logIndex<<" "<<"w"<<" "<<request->name()<<std::endl;
             //send to peer
+            std::mutex mtx;
+            std::vector<std::thread> threads;
             int count = 0;
             auto client = clients.begin();
             while(client != clients.end())
             {
-                std::string reply = client->Replicate(request->name(), request->contents());
-                client++;
-                count +=1;
+                threads.push_back(std::thread([this,&mtx,&count,client,request]() {
+                    std::string reply = client -> Replicate(request->name(),request->contents());
+                    if(reply == "ok")
+                    {
+                        mtx.lock();
+                        count++;
+                        mtx.unlock();
+                    }
+                            }));
             }
-            reply -> set_message("ok");
+            for(std::thread& t : threads)
+                t.join();
+            if(count)
+                reply -> set_message("ok");
+            else
+                reply -> set_message("fail to save file");
         }
         else
         {
@@ -178,7 +197,7 @@ class DataServer : public DsService::Service {
             std::string contents((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
             reply -> set_message("ok");
             reply -> set_contents(contents);
-			file.close();
+            file.close();
        }
        else
        {
