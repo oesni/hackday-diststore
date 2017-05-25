@@ -28,7 +28,7 @@ using diststore::DsService;
 using diststore::CheckHealthRequest;
 using diststore::CheckHealthReply;
 
-string mgmtPort = "";
+string mgmtPort = "0.0.0.0:8080";
 string addr[3] = {"" ,"" ,"" }; // port number of 0: ds1, 1: ds2, 2: ds3
 string dsTable[3]; // 0: ds1, 1: ds2, 2: ds3
 int dsLogTable[3];
@@ -96,15 +96,28 @@ void electLeader(){
 	if((dsTable[dsnum] == "F" && dsTable[1]=="N") || (dsTable[1] !="F" && (dsLogTable[dsnum] < dsLogTable[1])) ){
 		if(dsTable[dsnum] == "L")	dsTable[dsnum] = "N";
 		dsTable[1] = "L";
+		dsnum = 1;
 	}
 	
 	if((dsTable[dsnum] == "F" && dsTable[2]=="N") || (dsTable[2] !="F" && (dsLogTable[dsnum] < dsLogTable[2])) ){
 		if(dsTable[dsnum] == "L")	dsTable[dsnum] = "N";
 		dsTable[2] = "L";
+		dsnum = 2;
 	}
 }
 
+void sysinit(){
+	dsLogTable[0] = 0;
+	dsLogTable[1] = 0;
+	dsLogTable[2] = 0;
+	
+	dsTable[0] = "L";
+	dsTable[1] = "N";
+	dsTable[2] = "N";
+}
 int main(){
+
+	electLeader();
 	RunServer();
 	DsServiceClient client1(grpc::CreateChannel(addr[0], grpc::InsecureChannelCredentials()));
 	DsServiceClient client2(grpc::CreateChannel(addr[1], grpc::InsecureChannelCredentials()));

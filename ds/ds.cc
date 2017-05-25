@@ -18,7 +18,11 @@ using namespace std;
 using grpc::Server;
 using grpc::ServerBuilder;
 using grpc::ServerContext;
+using grpc::ServerWriter;
 using grpc::Status;
+
+// client
+using grpc::ClientReader;
 
 using diststore::DsService;
 using diststore::PutFileRequest;
@@ -34,6 +38,7 @@ using grpc::Channel;
 using grpc::ClientContext;
 
 const static std::string storage_prefix("/data/");
+unsigned long logIndex = 0;
 
 class Peer final {
     private:
@@ -77,6 +82,40 @@ class DsServiceClient {
                 return "RPC failed";
             }
         }
+
+		std::string Help() {
+			HelpRequest request;
+			request.set_lastlogindex(logIndex);
+
+			ClientContext context;
+			std::chrono::system_clock::time_point deadline = 
+				std::chrono::system_clock::now() + std::chrono::seconds(10);
+			context.set_deadline(deadline);
+
+			HelpReply h;
+			std::unique_ptr<ClientReader<HelpReply>> reader(stub_->Help(&context, request));
+			
+    		fstream logFile;
+			logFile.open(storage_prefix+"log", fstream::out | fstream::in | fstream::app);
+			if(!logFile.good()){
+				std::cerr<<"cannot open log file!!!"<<std::endl;
+				exit(1);
+			}
+			while(reader->Read(&h)) {
+				// action like put file
+				ofstream file (storage_prefix + h.logname(), ios::out);
+				if(file.is_open()){
+					file<<h.logcontent();
+					file.close();
+				}else{
+					return "failed";
+				}
+            	logFile << ++logIndex<<" "<<"w"<<" "<<h.logname()<<std::endl;
+			}
+			logFile.close();
+			Status status = reader->Finish();
+			return "ok";
+		}
 };
 
 class DataServer : public DsService::Service {
@@ -96,7 +135,6 @@ class DataServer : public DsService::Service {
         });
     }
 //variable
-    unsigned long logIndex = 0;
     fstream logFile;
     bool isLeader;
     std::vector<DsServiceClient> clients;
@@ -176,17 +214,61 @@ class DataServer : public DsService::Service {
         return Status::OK;
     }
 
-    Status Help(ServerContext* context, const HelpRequest* request, HelpReply* reply)
+    Status Help(ServerContext* context, const HelpRequest* request, ServerWriter<HelpReply>* reply)
         override
     {
         //do something
+		int lastIndex = request->lastlogindex();
+		
+		char *logfilename;
+		strcat(logfilename, storage_prefix.c_str());
+		strcat(logfilename, "log");
+        
+		FILE* log = fopen(logfilename, "r");
+		logFile.open(storage_prefix+"log", fstream::out | fstream::in | fstream::app);
+		std::string line;
+		int num;
+		//strtok...
+		while(true){
+			fscanf(log, "%d", &num );
+			getline(logFile, line);
+			if(num == lastIndex){
+				break;
+			}
+		}
+		//logFile form: logIndex<<" "<<"w"<<" "<<request->name()<<std::endl;
+		HelpReply h;
+		while(true){
+			fscanf(log, "%d", &num );
+			getline(logFile, line);
+			if(!line.empty()){
+				line = line.substr(3);
+	
+				ifstream file(storage_prefix + line, ios::in);
+				std::string contents((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+				file.close();
+				h.set_lognum(num);
+				h.set_logname(line);
+				h.set_logcontent(contents);
+				reply->Write(h);
+			}else{
+				cout<<"Scan all the log file"<<std::endl;
+				break;
+			}
+		}
+		logFile.close();
+		fclose(log);
 
         return Status::OK;
-    }
+    } /// I'm not sure.. if it will work...
 
 };
 
-;
+//get log index whenever system dies
+void getlogIndex(){
+	logIndex = 0;	
+}
+
 int main(int argc, char** argv)
 {
     std::string addr(argv[1]);
@@ -196,7 +278,11 @@ int main(int argc, char** argv)
     {
         p.push_back(Peer(std::string(argv[i])));
     }
+	getlogIndex();
 
+	if(logIndex !=0 ){
+		// call Client Help;
+	}
     DataServer service(p,isLeader);
 
     ServerBuilder builder;

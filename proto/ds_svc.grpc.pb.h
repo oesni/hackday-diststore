@@ -43,15 +43,18 @@ class DsService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::diststore::CheckHealthReply>> AsyncCheckHealth(::grpc::ClientContext* context, const ::diststore::CheckHealthRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::diststore::CheckHealthReply>>(AsyncCheckHealthRaw(context, request, cq));
     }
-    virtual ::grpc::Status Help(::grpc::ClientContext* context, const ::diststore::HelpRequest& request, ::diststore::HelpReply* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::diststore::HelpReply>> AsyncHelp(::grpc::ClientContext* context, const ::diststore::HelpRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::diststore::HelpReply>>(AsyncHelpRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientReaderInterface< ::diststore::HelpReply>> Help(::grpc::ClientContext* context, const ::diststore::HelpRequest& request) {
+      return std::unique_ptr< ::grpc::ClientReaderInterface< ::diststore::HelpReply>>(HelpRaw(context, request));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::diststore::HelpReply>> AsyncHelp(::grpc::ClientContext* context, const ::diststore::HelpRequest& request, ::grpc::CompletionQueue* cq, void* tag) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::diststore::HelpReply>>(AsyncHelpRaw(context, request, cq, tag));
     }
   private:
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::diststore::PutFileReply>* AsyncPutFileRaw(::grpc::ClientContext* context, const ::diststore::PutFileRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::diststore::GetFileReply>* AsyncGetFileRaw(::grpc::ClientContext* context, const ::diststore::GetFileRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::diststore::CheckHealthReply>* AsyncCheckHealthRaw(::grpc::ClientContext* context, const ::diststore::CheckHealthRequest& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::diststore::HelpReply>* AsyncHelpRaw(::grpc::ClientContext* context, const ::diststore::HelpRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientReaderInterface< ::diststore::HelpReply>* HelpRaw(::grpc::ClientContext* context, const ::diststore::HelpRequest& request) = 0;
+    virtual ::grpc::ClientAsyncReaderInterface< ::diststore::HelpReply>* AsyncHelpRaw(::grpc::ClientContext* context, const ::diststore::HelpRequest& request, ::grpc::CompletionQueue* cq, void* tag) = 0;
   };
   class Stub final : public StubInterface {
    public:
@@ -68,9 +71,11 @@ class DsService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::diststore::CheckHealthReply>> AsyncCheckHealth(::grpc::ClientContext* context, const ::diststore::CheckHealthRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::diststore::CheckHealthReply>>(AsyncCheckHealthRaw(context, request, cq));
     }
-    ::grpc::Status Help(::grpc::ClientContext* context, const ::diststore::HelpRequest& request, ::diststore::HelpReply* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::diststore::HelpReply>> AsyncHelp(::grpc::ClientContext* context, const ::diststore::HelpRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::diststore::HelpReply>>(AsyncHelpRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientReader< ::diststore::HelpReply>> Help(::grpc::ClientContext* context, const ::diststore::HelpRequest& request) {
+      return std::unique_ptr< ::grpc::ClientReader< ::diststore::HelpReply>>(HelpRaw(context, request));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncReader< ::diststore::HelpReply>> AsyncHelp(::grpc::ClientContext* context, const ::diststore::HelpRequest& request, ::grpc::CompletionQueue* cq, void* tag) {
+      return std::unique_ptr< ::grpc::ClientAsyncReader< ::diststore::HelpReply>>(AsyncHelpRaw(context, request, cq, tag));
     }
 
    private:
@@ -78,7 +83,8 @@ class DsService final {
     ::grpc::ClientAsyncResponseReader< ::diststore::PutFileReply>* AsyncPutFileRaw(::grpc::ClientContext* context, const ::diststore::PutFileRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::diststore::GetFileReply>* AsyncGetFileRaw(::grpc::ClientContext* context, const ::diststore::GetFileRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::diststore::CheckHealthReply>* AsyncCheckHealthRaw(::grpc::ClientContext* context, const ::diststore::CheckHealthRequest& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::diststore::HelpReply>* AsyncHelpRaw(::grpc::ClientContext* context, const ::diststore::HelpRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientReader< ::diststore::HelpReply>* HelpRaw(::grpc::ClientContext* context, const ::diststore::HelpRequest& request) override;
+    ::grpc::ClientAsyncReader< ::diststore::HelpReply>* AsyncHelpRaw(::grpc::ClientContext* context, const ::diststore::HelpRequest& request, ::grpc::CompletionQueue* cq, void* tag) override;
     const ::grpc::RpcMethod rpcmethod_PutFile_;
     const ::grpc::RpcMethod rpcmethod_GetFile_;
     const ::grpc::RpcMethod rpcmethod_CheckHealth_;
@@ -93,7 +99,7 @@ class DsService final {
     virtual ::grpc::Status PutFile(::grpc::ServerContext* context, const ::diststore::PutFileRequest* request, ::diststore::PutFileReply* response);
     virtual ::grpc::Status GetFile(::grpc::ServerContext* context, const ::diststore::GetFileRequest* request, ::diststore::GetFileReply* response);
     virtual ::grpc::Status CheckHealth(::grpc::ServerContext* context, const ::diststore::CheckHealthRequest* request, ::diststore::CheckHealthReply* response);
-    virtual ::grpc::Status Help(::grpc::ServerContext* context, const ::diststore::HelpRequest* request, ::diststore::HelpReply* response);
+    virtual ::grpc::Status Help(::grpc::ServerContext* context, const ::diststore::HelpRequest* request, ::grpc::ServerWriter< ::diststore::HelpReply>* writer);
   };
   template <class BaseClass>
   class WithAsyncMethod_PutFile : public BaseClass {
@@ -167,12 +173,12 @@ class DsService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status Help(::grpc::ServerContext* context, const ::diststore::HelpRequest* request, ::diststore::HelpReply* response) final override {
+    ::grpc::Status Help(::grpc::ServerContext* context, const ::diststore::HelpRequest* request, ::grpc::ServerWriter< ::diststore::HelpReply>* writer) final override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequestHelp(::grpc::ServerContext* context, ::diststore::HelpRequest* request, ::grpc::ServerAsyncResponseWriter< ::diststore::HelpReply>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(3, context, request, response, new_call_cq, notification_cq, tag);
+    void RequestHelp(::grpc::ServerContext* context, ::diststore::HelpRequest* request, ::grpc::ServerAsyncWriter< ::diststore::HelpReply>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncServerStreaming(3, context, request, writer, new_call_cq, notification_cq, tag);
     }
   };
   typedef WithAsyncMethod_PutFile<WithAsyncMethod_GetFile<WithAsyncMethod_CheckHealth<WithAsyncMethod_Help<Service > > > > AsyncService;
@@ -239,7 +245,7 @@ class DsService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status Help(::grpc::ServerContext* context, const ::diststore::HelpRequest* request, ::diststore::HelpReply* response) final override {
+    ::grpc::Status Help(::grpc::ServerContext* context, const ::diststore::HelpRequest* request, ::grpc::ServerWriter< ::diststore::HelpReply>* writer) final override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -304,29 +310,29 @@ class DsService final {
     // replace default version of method with streamed unary
     virtual ::grpc::Status StreamedCheckHealth(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::diststore::CheckHealthRequest,::diststore::CheckHealthReply>* server_unary_streamer) = 0;
   };
+  typedef WithStreamedUnaryMethod_PutFile<WithStreamedUnaryMethod_GetFile<WithStreamedUnaryMethod_CheckHealth<Service > > > StreamedUnaryService;
   template <class BaseClass>
-  class WithStreamedUnaryMethod_Help : public BaseClass {
+  class WithSplitStreamingMethod_Help : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
-    WithStreamedUnaryMethod_Help() {
+    WithSplitStreamingMethod_Help() {
       ::grpc::Service::MarkMethodStreamed(3,
-        new ::grpc::StreamedUnaryHandler< ::diststore::HelpRequest, ::diststore::HelpReply>(std::bind(&WithStreamedUnaryMethod_Help<BaseClass>::StreamedHelp, this, std::placeholders::_1, std::placeholders::_2)));
+        new ::grpc::SplitServerStreamingHandler< ::diststore::HelpRequest, ::diststore::HelpReply>(std::bind(&WithSplitStreamingMethod_Help<BaseClass>::StreamedHelp, this, std::placeholders::_1, std::placeholders::_2)));
     }
-    ~WithStreamedUnaryMethod_Help() override {
+    ~WithSplitStreamingMethod_Help() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status Help(::grpc::ServerContext* context, const ::diststore::HelpRequest* request, ::diststore::HelpReply* response) final override {
+    ::grpc::Status Help(::grpc::ServerContext* context, const ::diststore::HelpRequest* request, ::grpc::ServerWriter< ::diststore::HelpReply>* writer) final override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    // replace default version of method with streamed unary
-    virtual ::grpc::Status StreamedHelp(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::diststore::HelpRequest,::diststore::HelpReply>* server_unary_streamer) = 0;
+    // replace default version of method with split streamed
+    virtual ::grpc::Status StreamedHelp(::grpc::ServerContext* context, ::grpc::ServerSplitStreamer< ::diststore::HelpRequest,::diststore::HelpReply>* server_split_streamer) = 0;
   };
-  typedef WithStreamedUnaryMethod_PutFile<WithStreamedUnaryMethod_GetFile<WithStreamedUnaryMethod_CheckHealth<WithStreamedUnaryMethod_Help<Service > > > > StreamedUnaryService;
-  typedef Service SplitStreamedService;
-  typedef WithStreamedUnaryMethod_PutFile<WithStreamedUnaryMethod_GetFile<WithStreamedUnaryMethod_CheckHealth<WithStreamedUnaryMethod_Help<Service > > > > StreamedService;
+  typedef WithSplitStreamingMethod_Help<Service > SplitStreamedService;
+  typedef WithStreamedUnaryMethod_PutFile<WithStreamedUnaryMethod_GetFile<WithStreamedUnaryMethod_CheckHealth<WithSplitStreamingMethod_Help<Service > > > > StreamedService;
 };
 
 }  // namespace diststore

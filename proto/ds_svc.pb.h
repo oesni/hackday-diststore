@@ -789,25 +789,47 @@ class HelpReply : public ::google::protobuf::Message /* @@protoc_insertion_point
 
   // accessors -------------------------------------------------------
 
-  // string loginfo = 1;
-  void clear_loginfo();
-  static const int kLoginfoFieldNumber = 1;
-  const ::std::string& loginfo() const;
-  void set_loginfo(const ::std::string& value);
+  // string logname = 2;
+  void clear_logname();
+  static const int kLognameFieldNumber = 2;
+  const ::std::string& logname() const;
+  void set_logname(const ::std::string& value);
   #if LANG_CXX11
-  void set_loginfo(::std::string&& value);
+  void set_logname(::std::string&& value);
   #endif
-  void set_loginfo(const char* value);
-  void set_loginfo(const char* value, size_t size);
-  ::std::string* mutable_loginfo();
-  ::std::string* release_loginfo();
-  void set_allocated_loginfo(::std::string* loginfo);
+  void set_logname(const char* value);
+  void set_logname(const char* value, size_t size);
+  ::std::string* mutable_logname();
+  ::std::string* release_logname();
+  void set_allocated_logname(::std::string* logname);
+
+  // string logcontent = 3;
+  void clear_logcontent();
+  static const int kLogcontentFieldNumber = 3;
+  const ::std::string& logcontent() const;
+  void set_logcontent(const ::std::string& value);
+  #if LANG_CXX11
+  void set_logcontent(::std::string&& value);
+  #endif
+  void set_logcontent(const char* value);
+  void set_logcontent(const char* value, size_t size);
+  ::std::string* mutable_logcontent();
+  ::std::string* release_logcontent();
+  void set_allocated_logcontent(::std::string* logcontent);
+
+  // int32 lognum = 1;
+  void clear_lognum();
+  static const int kLognumFieldNumber = 1;
+  ::google::protobuf::int32 lognum() const;
+  void set_lognum(::google::protobuf::int32 value);
 
   // @@protoc_insertion_point(class_scope:diststore.HelpReply)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::google::protobuf::internal::ArenaStringPtr loginfo_;
+  ::google::protobuf::internal::ArenaStringPtr logname_;
+  ::google::protobuf::internal::ArenaStringPtr logcontent_;
+  ::google::protobuf::int32 lognum_;
   mutable int _cached_size_;
   friend struct  protobuf_ds_5fsvc_2eproto::TableStruct;
 };
@@ -1239,56 +1261,122 @@ inline void HelpRequest::set_lastlogindex(::google::protobuf::int32 value) {
 
 // HelpReply
 
-// string loginfo = 1;
-inline void HelpReply::clear_loginfo() {
-  loginfo_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+// int32 lognum = 1;
+inline void HelpReply::clear_lognum() {
+  lognum_ = 0;
 }
-inline const ::std::string& HelpReply::loginfo() const {
-  // @@protoc_insertion_point(field_get:diststore.HelpReply.loginfo)
-  return loginfo_.GetNoArena();
+inline ::google::protobuf::int32 HelpReply::lognum() const {
+  // @@protoc_insertion_point(field_get:diststore.HelpReply.lognum)
+  return lognum_;
 }
-inline void HelpReply::set_loginfo(const ::std::string& value) {
+inline void HelpReply::set_lognum(::google::protobuf::int32 value) {
   
-  loginfo_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:diststore.HelpReply.loginfo)
+  lognum_ = value;
+  // @@protoc_insertion_point(field_set:diststore.HelpReply.lognum)
+}
+
+// string logname = 2;
+inline void HelpReply::clear_logname() {
+  logname_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& HelpReply::logname() const {
+  // @@protoc_insertion_point(field_get:diststore.HelpReply.logname)
+  return logname_.GetNoArena();
+}
+inline void HelpReply::set_logname(const ::std::string& value) {
+  
+  logname_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:diststore.HelpReply.logname)
 }
 #if LANG_CXX11
-inline void HelpReply::set_loginfo(::std::string&& value) {
+inline void HelpReply::set_logname(::std::string&& value) {
   
-  loginfo_.SetNoArena(
+  logname_.SetNoArena(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:diststore.HelpReply.loginfo)
+  // @@protoc_insertion_point(field_set_rvalue:diststore.HelpReply.logname)
 }
 #endif
-inline void HelpReply::set_loginfo(const char* value) {
+inline void HelpReply::set_logname(const char* value) {
   
-  loginfo_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:diststore.HelpReply.loginfo)
+  logname_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:diststore.HelpReply.logname)
 }
-inline void HelpReply::set_loginfo(const char* value, size_t size) {
+inline void HelpReply::set_logname(const char* value, size_t size) {
   
-  loginfo_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+  logname_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:diststore.HelpReply.loginfo)
+  // @@protoc_insertion_point(field_set_pointer:diststore.HelpReply.logname)
 }
-inline ::std::string* HelpReply::mutable_loginfo() {
+inline ::std::string* HelpReply::mutable_logname() {
   
-  // @@protoc_insertion_point(field_mutable:diststore.HelpReply.loginfo)
-  return loginfo_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  // @@protoc_insertion_point(field_mutable:diststore.HelpReply.logname)
+  return logname_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::std::string* HelpReply::release_loginfo() {
-  // @@protoc_insertion_point(field_release:diststore.HelpReply.loginfo)
+inline ::std::string* HelpReply::release_logname() {
+  // @@protoc_insertion_point(field_release:diststore.HelpReply.logname)
   
-  return loginfo_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  return logname_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void HelpReply::set_allocated_loginfo(::std::string* loginfo) {
-  if (loginfo != NULL) {
+inline void HelpReply::set_allocated_logname(::std::string* logname) {
+  if (logname != NULL) {
     
   } else {
     
   }
-  loginfo_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), loginfo);
-  // @@protoc_insertion_point(field_set_allocated:diststore.HelpReply.loginfo)
+  logname_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), logname);
+  // @@protoc_insertion_point(field_set_allocated:diststore.HelpReply.logname)
+}
+
+// string logcontent = 3;
+inline void HelpReply::clear_logcontent() {
+  logcontent_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& HelpReply::logcontent() const {
+  // @@protoc_insertion_point(field_get:diststore.HelpReply.logcontent)
+  return logcontent_.GetNoArena();
+}
+inline void HelpReply::set_logcontent(const ::std::string& value) {
+  
+  logcontent_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:diststore.HelpReply.logcontent)
+}
+#if LANG_CXX11
+inline void HelpReply::set_logcontent(::std::string&& value) {
+  
+  logcontent_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:diststore.HelpReply.logcontent)
+}
+#endif
+inline void HelpReply::set_logcontent(const char* value) {
+  
+  logcontent_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:diststore.HelpReply.logcontent)
+}
+inline void HelpReply::set_logcontent(const char* value, size_t size) {
+  
+  logcontent_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:diststore.HelpReply.logcontent)
+}
+inline ::std::string* HelpReply::mutable_logcontent() {
+  
+  // @@protoc_insertion_point(field_mutable:diststore.HelpReply.logcontent)
+  return logcontent_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* HelpReply::release_logcontent() {
+  // @@protoc_insertion_point(field_release:diststore.HelpReply.logcontent)
+  
+  return logcontent_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void HelpReply::set_allocated_logcontent(::std::string* logcontent) {
+  if (logcontent != NULL) {
+    
+  } else {
+    
+  }
+  logcontent_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), logcontent);
+  // @@protoc_insertion_point(field_set_allocated:diststore.HelpReply.logcontent)
 }
 
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
