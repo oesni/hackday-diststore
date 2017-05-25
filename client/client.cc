@@ -93,7 +93,12 @@ class DsServiceClient {
 
 			PutFileReply reply;
 			Status status = stub_->PutFile(&context, request, &reply);
-			return status.ok();
+			if (!status.ok()) {
+				std::cout << status.error_code() << ": " << status.error_message() << std::endl;
+				return false;
+			} else {
+				return true;
+			}
 		}
 
 		std::pair<bool, std::string> GetFile(const std::string &name) {
@@ -106,6 +111,7 @@ class DsServiceClient {
 			GetFileReply reply;
 			Status status = stub_->GetFile(&context, request, &reply);
 			if (!status.ok()) {
+				std::cout << status.error_code() << ": " << status.error_message() << std::endl;
 				return std::make_pair(false, "rpc fail");
 			} else if (reply.message() == "ok") {
 				return std::make_pair(true, reply.contents());
@@ -125,7 +131,7 @@ void MembershipUpdater(MgmtServiceClient *client, DsSelector *dsSelector) {
 		std::string ret = client->GetMembership(&leader_idx, states);
 		if (ret == "ok") {
 			std::string mbr = dsSelector->Update(leader_idx, states);
-			std::cout << "mbr updated: " << mbr << std::endl;
+			//std::cout << "mbr updated: " << mbr << std::endl;
 		} else {
 			std::cerr << "fail to get membership from mgmt. err:" << ret << std::endl;
 		}
@@ -155,17 +161,34 @@ std::pair<bool, std::string> GetFile(DsSelector &dsSelector, const std::string &
 	}
 }
 
+void pleaseEnter() {
+	std::cout << "Press the ENTER key" << std::endl;
+	std::cin.get();
+}
+
+/*
+void assertString(std::string expected, std::string actual) {
+	if (expected != actual) {
+	}
+}
+*/
+
 int main(int argc, char **argv) {
 	DsSelector dsSelector;
 	MgmtServiceClient client(grpc::CreateChannel("localhost:8080", grpc::InsecureChannelCredentials()));
 
 	std::thread mbrUpdater(&MembershipUpdater, &client, &dsSelector);
 	
-	usleep(3*1000*1000);
+	std::cout << "ready to put?" << std::endl;
+	pleaseEnter();
 	bool ret = PutFile(dsSelector, "foo", "hello");
 	std::cout << "put : " << ret << std::endl;
+
+	std::cout << "ready to get?" << std::endl;
+	pleaseEnter();
 	std::pair<bool, std::string> p = GetFile(dsSelector, "foo");
 	std::cout << "get : " << p.first << ", " << p.second << std::endl;
+
 
 	mbrUpdater.join();
 	return 0;
