@@ -5,3 +5,14 @@ package diststore;
 service MgmtService {
 	rpc GetMembership (GetMembershipRequest) returns (GetMembershipResponse) {}
 }
+
+message GetMembershipRequest {
+
+}
+
+// L: leader, N: normal, F: Fail
+message GetMembershipResponse {
+	string member1 = 1;
+	string member2 = 2;
+	string member3 = 3;
+}
