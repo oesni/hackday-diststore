@@ -139,12 +139,14 @@ class DataServer : public DsService::Service {
     fstream logFile;
     bool isLeader;
     std::vector<DsServiceClient> clients;
+	std::mutex mtx;
 
     
     
     Status PutFile(ServerContext* context, const PutFileRequest* request, PutFileReply* reply)
         override
     {
+		mtx.lock();
         std::cout<<"PutFile!"<<std::endl;
         //if(!isLeader)   //if not leader
         //{
@@ -158,36 +160,41 @@ class DataServer : public DsService::Service {
             file.close();
             logFile << ++logIndex<<" "<<"w"<<" "<<request->name()<<std::endl;
             //send to peer
-            std::mutex mtx;
-            std::vector<std::thread> threads;
-            int count = 0;
-            auto client = clients.begin();
-         
-            while(client != clients.end())
-            {
-                threads.push_back(std::thread([this,&mtx,&count,client,request]() {
-                    std::string reply = client -> Replicate(request->name(),request->contents());
-                    if(reply == "ok")
-                    {
-                        mtx.lock();
-                        count++;
-                        mtx.unlock();
-                    }
-                            }));
-                client++;
-            }
+			if (isLeader) {
+				std::mutex mtx;
+				std::vector<std::thread> threads;
+				int count = 0;
+				auto client = clients.begin();
+			 
+				while(client != clients.end())
+				{
+					threads.push_back(std::thread([this,&mtx,&count,client,request]() {
+						std::string reply = client -> Replicate(request->name(),request->contents());
+						if(reply == "ok")
+						{
+							mtx.lock();
+							count++;
+							mtx.unlock();
+						}
+								}));
+					client++;
+				}
 
-            for(std::thread& t : threads)
-                t.join();
-            if(count)
-                reply -> set_message("ok");
-            else
-                reply -> set_message("fail to save file");
+				for(std::thread& t : threads)
+					t.join();
+				if(count)
+					reply -> set_message("ok");
+				else
+					reply -> set_message("fail to save file");
+			} else {
+				reply -> set_message("ok");
+			}
         }
         else
         {
             reply -> set_message("fail to open file");
         }
+		mtx.unlock();
         return Status::OK;
     }
 

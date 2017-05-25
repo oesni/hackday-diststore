@@ -29,7 +29,7 @@ using diststore::CheckHealthRequest;
 using diststore::CheckHealthReply;
 
 string mgmtPort = "0.0.0.0:8080";
-string addr[3] = {"" ,"" ,"" }; // port number of 0: ds1, 1: ds2, 2: ds3
+string addr[3] = {"10.33.12.102:8081" ,"10.32.25.45:8081" ,"10.32.26.128:8081" }; // port number of 0: ds1, 1: ds2, 2: ds3
 string dsTable[3]; // 0: ds1, 1: ds2, 2: ds3
 int dsLogTable[3];
 int flag = 0; // check if leader is safe!
@@ -60,6 +60,7 @@ class DsServiceClient {
 				std::cout << status.error_code() << ": "<< status.error_message() << std::endl;
 				if(dsTable[dsnum] == "L")	flag =1;
 				dsTable[dsnum] = "F";
+				std::cout << dsnum << ": " << dsTable[dsnum] << std::endl;
 				return "RPC failed";
 			}
 
@@ -73,6 +74,7 @@ class MgmtServiceImpl final : public MgmtService::Service {
 		reply->set_member1(dsTable[0]);
 		reply->set_member2(dsTable[1]);
 		reply->set_member3(dsTable[2]);
+		std::cout << "[" << dsTable[0] << "," << dsTable[1] << "," << dsTable[2] << "]";
 		return Status::OK;
 	}
 };
@@ -116,7 +118,7 @@ void sysinit(){
 	dsTable[2] = "N";
 }
 int main(){
-
+	sysinit();
 	electLeader();
 	RunServer();
 	DsServiceClient client1(grpc::CreateChannel(addr[0], grpc::InsecureChannelCredentials()));

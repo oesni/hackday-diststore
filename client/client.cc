@@ -189,8 +189,8 @@ int main(int argc, char **argv) {
 	bool ret;
 	int i, c;
 	DsSelector dsSelector;
-	//MgmtServiceClient client(grpc::CreateChannel("localhost:8080", grpc::InsecureChannelCredentials()));
-	//std::thread mbrUpdater(&MembershipUpdater, &client, &dsSelector);
+	MgmtServiceClient client(grpc::CreateChannel("localhost:8080", grpc::InsecureChannelCredentials()));
+	std::thread mbrUpdater(&MembershipUpdater, &client, &dsSelector);
 	
 	std::cout << "[TEST] replication" << std::endl;
 	std::cout << "ready to put?" << std::endl;
@@ -278,6 +278,6 @@ int main(int argc, char **argv) {
 		std::cout << "get-" << i << ": " << p.first << ", " << p.second << std::endl;
 	}
 
-	//mbrUpdater.join();
+	mbrUpdater.join();
 	return 0;
 }
