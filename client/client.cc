@@ -149,7 +149,7 @@ bool PutFile(DsSelector *dsSelector, const std::string &name, const std::string 
 		return false;
 	} else {
 		DsServiceClient client(channel);
-		return client.PutFile("foo", "hello");
+		return client.PutFile("foo", contents);
 	}
 }
 
