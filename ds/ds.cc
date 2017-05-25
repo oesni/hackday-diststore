@@ -296,9 +296,10 @@ int main(int argc, char** argv)
     }
 	getlogIndex();
 
-	if(logIndex !=0 ){
-		// call Client Help;
+	if(logIndex !=-1 ){
+				
 	}
+
     DataServer service(p,isLeader);
 
     ServerBuilder builder;

@@ -52,7 +52,9 @@ class DsServiceClient {
 
 			if(status.ok()){
 				if(reply.message() == "ok") {
-					dsTable[dsnum] = "N";
+					if(dsTable[dsnum] != "L"){
+						dsTable[dsnum] = "N";
+					}
 					dsLogTable[dsnum] = (int)reply.lastlogindex();
 					return "success";
 				}
