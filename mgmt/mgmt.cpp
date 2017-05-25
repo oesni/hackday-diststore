@@ -106,10 +106,17 @@ void electLeader(){
 	}
 }
 
-int main(){
+void sysinit(){
 	dsLogTable[0] = 0;
 	dsLogTable[1] = 0;
 	dsLogTable[2] = 0;
+	
+	dsTable[0] = "L";
+	dsTable[1] = "N";
+	dsTable[2] = "N";
+}
+int main(){
+
 	electLeader();
 	RunServer();
 	DsServiceClient client1(grpc::CreateChannel(addr[0], grpc::InsecureChannelCredentials()));

@@ -17,6 +17,9 @@ using grpc::ServerContext;
 using grpc::ServerWriter;
 using grpc::Status;
 
+// client
+using grpc::ClientReader;
+
 using diststore::DsService;
 using diststore::PutFileRequest;
 using diststore::PutFileReply;
@@ -74,6 +77,23 @@ class DsServiceClient {
                 return "RPC failed";
             }
         }
+
+		std::string Help(int lognum) {
+			HelpRequest request;
+			request.set_lastlogindex(lognum);
+
+			ClientContext context;
+			std::chrono::system_clock::time_point deadline = 
+				std::chrono::system_clock::now() + std::chrono::seconds(10);
+			context.set_deadline(deadline);
+
+			HelpReply h;
+			std::unique_ptr<ClientReader<HelpReply>> reader(stub_->Help(&context, request));
+			while(reader->Read(&h)) {
+				// action like put file
+			}
+			Status status = reader->Finish();
+		}
 };
 
 class DataServer : public DsService::Service {
@@ -141,6 +161,7 @@ class DataServer : public DsService::Service {
             std::string contents((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
             reply -> set_message("ok");
             reply -> set_contents(contents);
+			file.close();
        }
        else
        {
@@ -163,13 +184,51 @@ class DataServer : public DsService::Service {
     {
         //do something
 		int lastIndex = request->lastlogindex();
+		
+		char *logfilename;
+		strcat(logfilename, storage_prefix.c_str());
+		strcat(logfilename, "log");
+        FILE* log = fopen(logfilename, "r");
+		logFile.open(storage_prefix+"log", fstream::out | fstream::in | fstream::app);
+		std::string line;
+		int num;
+		//strtok...
+		while(true){
+			fscanf(log, "%d", &num );
+			getline(logFile, line);
+			if(num == lastIndex){
+				break;
+			}
+		}
+		//logFile form: logIndex<<" "<<"w"<<" "<<request->name()<<std::endl;
+		HelpReply h;
+		while(true){
+			fscanf(log, "%d", &num );
+			getline(logFile, line);
+			if(!line.empty()){
+				line = line.substr(3);
+	
+				ifstream file(storage_prefix + line, ios::in);
+				std::string contents((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+				file.close();
+				h.set_lognum(num);
+				h.set_logname(line);
+				h.set_logcontent(contents);
+				reply->Write(h);
+			}else{
+				cout<<"Scan all the log file"<<std::endl;
+				break;
+			}
+		}
+		logFile.close();
+		fclose(log);
 
         return Status::OK;
-    }
+    } /// I'm not sure.. if it will work...
 
 };
 
-;
+
 int main(int argc, char** argv)
 {
     std::string addr(argv[1]);
