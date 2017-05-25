@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package diststore;
+
+service DsService {
+	rpc PutFile (PutFileRequest) returns (PutFileReply) {}
+	rpc GetFile (GetFileRequest) returns (GetFileReply) {}
+}
+
+message PutFileRequest {
+	string name = 1;
+	string contents = 2;
+}
+
+message PutFileReply {
+	string message = 1;
+}
+
+message GetFileRequest {
+	string name = 1;
+}
+
+message GetFileReply {
+	string message = 1;
+	string contents = 2;
+}

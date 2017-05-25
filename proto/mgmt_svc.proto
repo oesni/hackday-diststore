@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+package diststore;
+
+service MgmtService {
+	rpc GetMembership (GetMembershipRequest) returns (GetMembershipResponse) {}
+}
