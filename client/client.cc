@@ -86,6 +86,8 @@ class DsServiceClient {
 
 		bool PutFile(const std::string &name, const std::string &contents) {
 			PutFileRequest request;
+			request.set_name(name);
+			request.set_contents(contents);
 
 			ClientContext context;
 			std::chrono::system_clock::time_point deadline = std::chrono::system_clock::now() + std::chrono::seconds(10);
@@ -103,6 +105,7 @@ class DsServiceClient {
 
 		std::pair<bool, std::string> GetFile(const std::string &name) {
 			GetFileRequest request;
+			request.set_name(name);
 
 			ClientContext context;
 			std::chrono::system_clock::time_point deadline = std::chrono::system_clock::now() + std::chrono::seconds(10);
