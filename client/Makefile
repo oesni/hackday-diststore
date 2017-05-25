@@ -7,10 +7,10 @@ PROTO_OBJS = ../proto/*.o
 
 all: client
 
-client: client.o
+client: *.o
 	$(CXX) $^ $(PROTO_OBJS) $(LDFLAGS) -o $@
 
-client.o: client.cc
+%.o: %.cc
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $^
 
 clean:
