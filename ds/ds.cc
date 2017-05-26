@@ -74,6 +74,7 @@ class DsServiceClient {
 
             PutFileReply reply;
             Status status = stub_->PutFile(&context, request, &reply);
+			cout<<reply.message()<<std::endl;
             if(status.ok())
             {
                 return reply.message();

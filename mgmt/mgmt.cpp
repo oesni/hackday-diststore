@@ -117,7 +117,11 @@ void sysinit(){
 	dsTable[1] = "N";
 	dsTable[2] = "N";
 }
-int main(){
+int main(int argc, char* argv[]){
+
+	addr[0] = argv[1];
+	addr[1] = argv[2];
+	addr[2] = argv[3];
 
 	electLeader();
 	RunServer();
