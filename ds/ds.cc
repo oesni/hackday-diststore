@@ -219,6 +219,7 @@ class DataServer : public DsService::Service {
     Status CheckHealth(ServerContext* context, const CheckHealthRequest* request, CheckHealthReply* reply)
         override
     {
+		std::cout << "check health" << std::endl;
         reply -> set_message("ok");
         reply -> set_lastlogindex(logIndex);
 

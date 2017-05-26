@@ -149,7 +149,7 @@ bool PutFile(DsSelector *dsSelector, const std::string &name, const std::string 
 		return false;
 	} else {
 		DsServiceClient client(channel);
-		return client.PutFile("foo", contents);
+		return client.PutFile(name, contents);
 	}
 }
 
@@ -159,7 +159,7 @@ std::pair<bool, std::string> GetFile(DsSelector *dsSelector, const std::string &
 		return std::make_pair(false, "there is no ds alive");
 	} else {
 		DsServiceClient dsClient(channel);
-		return dsClient.GetFile("foo");
+		return dsClient.GetFile(name);
 	}
 }
 
@@ -169,7 +169,7 @@ std::pair<bool, std::string> GetFileWithIdx(DsSelector *dsSelector, const std::s
 		return std::make_pair(false, "there is no ds alive");
 	} else {
 		DsServiceClient dsClient(channel);
-		return dsClient.GetFile("foo");
+		return dsClient.GetFile(name);
 	}
 }
 
