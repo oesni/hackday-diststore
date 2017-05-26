@@ -42,6 +42,7 @@ class DsServiceClient {
 		std::string CheckHealth(int dsnum){
 			
 			CheckHealthRequest request;
+
 			ClientContext context;
 			std::chrono::system_clock::time_point deadline = 
 				std::chrono::system_clock::now() + std::chrono::seconds(1);
@@ -52,8 +53,12 @@ class DsServiceClient {
 
 			if(status.ok()){
 				if(reply.message() == "ok") {
-					dsTable[dsnum] = "N";
+					if (dsTable[dsnum] == "F") {
+						dsTable[dsnum] = "N";
+						std::cout << dsnum << ": F -> N" << " : " << dsLogTable[dsnum] << std::endl;
+					}
 					dsLogTable[dsnum] = (int)reply.lastlogindex();
+					//std::cout << dsnum << ": " << dsTable[dsnum] << " : " << dsLogTable[dsnum] << std::endl;
 					return "success";
 				}
 			} else {
@@ -79,20 +84,6 @@ class MgmtServiceImpl final : public MgmtService::Service {
 	}
 };
 
-void RunServer(){
-	std::string addr(mgmtPort); // mgmt port.
-	MgmtServiceImpl service; 
-
-	ServerBuilder builder;
-	builder.AddListeningPort(addr, grpc::InsecureServerCredentials());
-	builder.RegisterService(&service);
-
-	std::unique_ptr<Server> server(builder.BuildAndStart());
-	std::cout << "Server listening on " << addr << std::endl;
-
-	server->Wait();
-}
-
 void electLeader(){
 	int dsnum = 0;
 	if((dsTable[dsnum] == "F" && dsTable[1]=="N") || (dsTable[1] !="F" && (dsLogTable[dsnum] < dsLogTable[1])) ){
@@ -117,27 +108,35 @@ void sysinit(){
 	dsTable[1] = "N";
 	dsTable[2] = "N";
 }
+
 int main(){
+	int i;
 	sysinit();
 	electLeader();
-	RunServer();
-	DsServiceClient client1(grpc::CreateChannel(addr[0], grpc::InsecureChannelCredentials()));
-	DsServiceClient client2(grpc::CreateChannel(addr[1], grpc::InsecureChannelCredentials()));
-	DsServiceClient client3(grpc::CreateChannel(addr[2], grpc::InsecureChannelCredentials()));
-	
-	std::string reply;
+
+	std::string mgmtAddr(mgmtPort); // mgmt port.
+	MgmtServiceImpl service; 
+
+	ServerBuilder builder;
+	builder.AddListeningPort(mgmtAddr, grpc::InsecureServerCredentials());
+	builder.RegisterService(&service);
+
+	std::unique_ptr<Server> server(builder.BuildAndStart());
+	std::cout << "Server listening on " << mgmtAddr << std::endl;
+
 	while(true){
-		reply = client1.CheckHealth(0);
-		//std::cout<<"reply1: "<<reply<<std::endl;
-		reply = client2.CheckHealth(1);
-		//std::cout<<"reply2: "<<reply<<std::endl;
-		reply = client3.CheckHealth(2);
-		//std::cout<<"reply3: "<<reply<<std::endl;
+		for (i = 0; i < 3; i++) {
+			DsServiceClient client(grpc::CreateChannel(addr[i], grpc::InsecureChannelCredentials()));
+			std::string reply = client.CheckHealth(i);
+			//std::cout << "i:" << i << ", reply:" << reply << std::endl;
+		}
 		
 		if(flag == 1)	electLeader();
 
-		usleep(10);
+		usleep(1*1000*1000);
 	}
+
+	server->Wait();
 
 	return 0;
 }
