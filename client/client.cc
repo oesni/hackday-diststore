@@ -149,7 +149,7 @@ bool PutFile(DsSelector *dsSelector, const std::string &name, const std::string 
 		return false;
 	} else {
 		DsServiceClient client(channel);
-		return client.PutFile("foo", contents);
+		return client.PutFile(name, contents);
 	}
 }
 
@@ -159,7 +159,7 @@ std::pair<bool, std::string> GetFile(DsSelector *dsSelector, const std::string &
 		return std::make_pair(false, "there is no ds alive");
 	} else {
 		DsServiceClient dsClient(channel);
-		return dsClient.GetFile("foo");
+		return dsClient.GetFile(name);
 	}
 }
 
@@ -169,7 +169,7 @@ std::pair<bool, std::string> GetFileWithIdx(DsSelector *dsSelector, const std::s
 		return std::make_pair(false, "there is no ds alive");
 	} else {
 		DsServiceClient dsClient(channel);
-		return dsClient.GetFile("foo");
+		return dsClient.GetFile(name);
 	}
 }
 
@@ -189,8 +189,8 @@ int main(int argc, char **argv) {
 	bool ret;
 	int i, c;
 	DsSelector dsSelector;
-	//MgmtServiceClient client(grpc::CreateChannel("localhost:8080", grpc::InsecureChannelCredentials()));
-	//std::thread mbrUpdater(&MembershipUpdater, &client, &dsSelector);
+	MgmtServiceClient client(grpc::CreateChannel("localhost:8080", grpc::InsecureChannelCredentials()));
+	std::thread mbrUpdater(&MembershipUpdater, &client, &dsSelector);
 	
 	std::cout << "[TEST] replication" << std::endl;
 	std::cout << "ready to put?" << std::endl;
@@ -278,6 +278,6 @@ int main(int argc, char **argv) {
 		std::cout << "get-" << i << ": " << p.first << ", " << p.second << std::endl;
 	}
 
-	//mbrUpdater.join();
+	mbrUpdater.join();
 	return 0;
 }
